@@ -141,3 +141,11 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# vite-plugin-dts leaks .d.ts into src/; cleanup script removes them post-build
+src/**/*.d.ts
+src/**/*.d.ts.map
+
+# Local-only references (design notes + sibling repo checkout)
+references/PROGRAM.md
+references/tonguetoquill-web/

@@ -1,0 +1,171 @@
+/**
+ * `@quillmark/editor/styles.css`
+ *
+ * Default selectors for the Lexical theme classes declared in
+ * `core/lexical/theme.ts`. Light DOM by design (per PROGRAM.md O2): hosts
+ * can override any token via CSS custom properties; selectors are namespaced
+ * under `qme-` to limit the conflict surface.
+ *
+ * Components use scoped `<style>` for layout chrome (toolbar, blocks, etc.)
+ * — this file only covers the rich-text content classes that Lexical applies
+ * inside the contenteditable region.
+ */
+
+:root {
+  --qme-bg: #ffffff;
+  --qme-text: #0f172a;
+  --qme-muted: #64748b;
+  --qme-border: #e2e8f0;
+  --qme-active: #3b82f6;
+  --qme-focus: #3b82f6;
+  --qme-toolbar-bg: #f8fafc;
+  --qme-toolbar-hover: #e2e8f0;
+  --qme-block-bg: #ffffff;
+  --qme-block-header-bg: #f8fafc;
+  --qme-input-bg: #ffffff;
+  --qme-banner-bg: #fef2f2;
+  --qme-banner-text: #991b1b;
+  --qme-banner-border: #fecaca;
+  --qme-classification-bg: #fef3c7;
+  --qme-classification-text: #78350f;
+  --qme-preview-bg: #f1f5f9;
+  --qme-code-bg: #f1f5f9;
+  --qme-code-text: #1e293b;
+  --qme-link: #2563eb;
+}
+
+.qme-theme-dark,
+[data-qme-theme='dark'] {
+  --qme-bg: #0f172a;
+  --qme-text: #e2e8f0;
+  --qme-muted: #94a3b8;
+  --qme-border: #1e293b;
+  --qme-toolbar-bg: #1e293b;
+  --qme-toolbar-hover: #334155;
+  --qme-block-bg: #0f172a;
+  --qme-block-header-bg: #1e293b;
+  --qme-input-bg: #1e293b;
+  --qme-preview-bg: #020617;
+  --qme-code-bg: #1e293b;
+  --qme-code-text: #e2e8f0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .qme-theme-auto {
+    --qme-bg: #0f172a;
+    --qme-text: #e2e8f0;
+    --qme-muted: #94a3b8;
+    --qme-border: #1e293b;
+    --qme-toolbar-bg: #1e293b;
+    --qme-toolbar-hover: #334155;
+    --qme-block-bg: #0f172a;
+    --qme-block-header-bg: #1e293b;
+    --qme-input-bg: #1e293b;
+    --qme-preview-bg: #020617;
+    --qme-code-bg: #1e293b;
+    --qme-code-text: #e2e8f0;
+  }
+}
+
+.qme-paragraph {
+  margin: 0 0 0.5em 0;
+}
+
+.qme-h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 1em 0 0.5em;
+}
+.qme-h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 1em 0 0.5em;
+}
+.qme-h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 1em 0 0.5em;
+}
+.qme-h4,
+.qme-h5,
+.qme-h6 {
+  font-weight: 600;
+  margin: 1em 0 0.5em;
+}
+
+.qme-ul,
+.qme-ol {
+  margin: 0 0 0.5em 0;
+  padding-left: 1.5em;
+}
+.qme-li {
+  margin: 0.125em 0;
+}
+.qme-nested-li {
+  list-style-type: none;
+}
+
+.qme-bold {
+  font-weight: 700;
+}
+.qme-italic {
+  font-style: italic;
+}
+.qme-underline {
+  text-decoration: underline;
+}
+.qme-strike {
+  text-decoration: line-through;
+}
+.qme-code-inline {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--qme-code-bg);
+  color: var(--qme-code-text);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.95em;
+}
+
+.qme-link {
+  color: var(--qme-link);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.qme-quote {
+  margin: 0 0 0.5em 0;
+  padding: 0.25em 1em;
+  border-left: 3px solid var(--qme-border);
+  color: var(--qme-muted);
+}
+
+.qme-code {
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--qme-code-bg);
+  color: var(--qme-code-text);
+  padding: 0.75em 1em;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  margin: 0 0 0.5em 0;
+}
+
+.qme-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 0.5em 0;
+}
+.qme-table-cell,
+.qme-table-cell-header {
+  border: 1px solid var(--qme-border);
+  padding: 0.375em 0.625em;
+  vertical-align: top;
+  min-width: 4ch;
+}
+.qme-table-cell-header {
+  background: var(--qme-toolbar-bg);
+  font-weight: 600;
+}
