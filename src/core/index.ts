@@ -25,6 +25,8 @@ export type {
   QuillmarkHost,
   Quill,
   RenderSession,
+  PaintNativeOptions,
+  PaintResult,
   SchemaField,
   Subscriber,
   TelemetryEvent,
@@ -36,6 +38,7 @@ export { DEFAULT_FEATURES } from './types.js';
 
 export { paintPagesIntoElement } from './canvas-render.js';
 export type { PaintOptions } from './canvas-render.js';
+export { watchZoom } from './zoom-watcher.js';
 
 export {
   walkSchema,

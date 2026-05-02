@@ -38,7 +38,7 @@
     "size": "node scripts/check-size.mjs"
   },
   "peerDependencies": {
-    "@quillmark/wasm": "^0.67.0",
+    "@quillmark/wasm": "^0.68.0",
     "svelte": "^5.0.0"
   },
   "peerDependenciesMeta": {

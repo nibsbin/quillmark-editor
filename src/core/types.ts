@@ -22,8 +22,8 @@ export type Quill = WasmQuill;
  * Slice of `@quillmark/wasm`'s service surface the editor depends on.
  * tonguetoquill-web's `quillmarkService` satisfies this shape.
  *
- * Requires `@quillmark/wasm` ≥ 0.67.0 — the preview path uses
- * `Quill.open(doc).paint(ctx, page, scale)` from that release.
+ * Requires `@quillmark/wasm` ≥ 0.68.0 — the preview path uses
+ * `Quill.open(doc).paint(ctx, page, opts) → PaintResult` from that release.
  */
 export interface QuillmarkHost {
   /** Resolves once the wasm engine and quiver are ready. */
@@ -32,19 +32,52 @@ export interface QuillmarkHost {
   readonly Document: typeof WasmDocument;
   /**
    * Synchronously fetch a resolved Quill. Throws if not yet resolved. The
-   * returned handle exposes `.open(doc): RenderSession` (wasm 0.67+).
+   * returned handle exposes `.open(doc): RenderSession` and
+   * `.supportsCanvas: boolean` (wasm 0.68+).
    */
   getQuill(quillRef: string): Quill;
   /** Resolve and load a quill so subsequent `getQuill` calls are synchronous. */
   ensureQuillResolved(quillRef: string): Promise<void>;
 }
 
-/** `RenderSession` from `@quillmark/wasm` 0.67+. */
+/**
+ * `RenderSession` from `@quillmark/wasm` 0.68+.
+ *
+ * The painter owns `canvas.width` / `canvas.height`; consumers own
+ * `canvas.style.*` and read the layout-pixel dimensions from `PaintResult`.
+ * `layoutScale` and `densityScale` decouple display-box size from
+ * backing-store density — fold `window.devicePixelRatio`, in-app zoom,
+ * and pinch-zoom into `densityScale`.
+ */
+export interface PaintNativeOptions {
+  /** Layout-space pixels per Typst point. Default 1 (1 pt → 1 CSS px). */
+  layoutScale?: number;
+  /** Backing-store density multiplier. Default 1. Pass DPR × zoom for crispness. */
+  densityScale?: number;
+}
+
+export interface PaintResult {
+  /** CSS-pixel display-box width — assign to `canvas.style.width + "px"`. */
+  layoutWidth: number;
+  /** CSS-pixel display-box height — assign to `canvas.style.height + "px"`. */
+  layoutHeight: number;
+  /** Backing-store width in device pixels (the painter wrote `canvas.width`). */
+  pixelWidth: number;
+  /** Backing-store height in device pixels (the painter wrote `canvas.height`). */
+  pixelHeight: number;
+}
+
 export interface RenderSession {
   readonly pageCount: number;
   readonly backendId: string;
+  /** `true` iff `paint` / `pageSize` will succeed for this session. */
+  readonly supportsCanvas: boolean;
   pageSize(page: number): { widthPt: number; heightPt: number };
-  paint(ctx: CanvasRenderingContext2D, page: number, scale: number): void;
+  paint(
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    page: number,
+    opts?: PaintNativeOptions,
+  ): PaintResult;
   free(): void;
 }
 

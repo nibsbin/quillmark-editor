@@ -14,7 +14,7 @@ This package replaces the ProseMirror-based editor in [`tonguetoquill-web`](http
 npm install @quillmark/editor @quillmark/wasm
 ```
 
-`@quillmark/wasm` is a peer dependency, **minimum version 0.67.0** &mdash; the preview pipeline relies on `Quill.open(doc).paint(ctx, page, scale)` from that release. `@quillmark/editor` does **not** bundle, fetch, or own the WASM lifecycle &mdash; the host injects it via the `QuillmarkHost` interface (a small superset of `tonguetoquill-web`'s `quillmarkService`).
+`@quillmark/wasm` is a peer dependency, **minimum version 0.68.0** &mdash; the preview pipeline relies on `Quill.open(doc).paint(ctx, page, { layoutScale, densityScale }) → PaintResult` from that release, where the painter owns `canvas.width`/`canvas.height` and the consumer owns `canvas.style.*`. `@quillmark/editor` does **not** bundle, fetch, or own the WASM lifecycle &mdash; the host injects it via the `QuillmarkHost` interface (a small superset of `tonguetoquill-web`'s `quillmarkService`).
 
 ## Architecture in one sentence
 
@@ -128,7 +128,7 @@ V1 covers the architectural backbone end-to-end:
 - ✅ Schema-driven metadata form (text / number / boolean / enum / date / array-of-string).
 - ✅ Card list with add / move / delete / reorder.
 - ✅ `<VisualEditor>` and `<QuillmarkPreview>` Svelte 5 components.
-- ✅ Canvas-based preview via `@quillmark/wasm` ≥ 0.67's `Quill.open(doc).paint(...)` — no `render` injection.
+- ✅ Canvas-based preview via `@quillmark/wasm` ≥ 0.68's `Quill.open(doc).paint(...)` with split `layoutScale` / `densityScale` knobs — no `render` injection.
 - ✅ `<quillmark-editor>` and `<quillmark-preview>` custom elements with `state` property + `markdown` attribute fallback.
 - ✅ Schema walker / validator / date-path collector callable headlessly.
 - ✅ Core unit tests (no Svelte runtime).
@@ -144,11 +144,12 @@ Deliberately deferred (see `references/PROGRAM.md`):
 
 ## Canvas preview trade-offs
 
-Preview is Canvas-only. The package paints directly via `quill.open(doc).paint(ctx, page, scale)` &mdash; faster and cheaper than the prior SVG path on multi-page documents, but with three intentional consequences hosts should know about:
+Preview is Canvas-only. The package paints directly via `quill.open(doc).paint(ctx, page, { layoutScale, densityScale }) → PaintResult` &mdash; faster and cheaper than the prior SVG path on multi-page documents, but with two intentional consequences hosts should know about:
 
 - **No text selection in the preview.** Canvas is a bitmap. If users need select-to-copy on the rendered page, they should look at the source markdown side instead.
 - **No screen-reader coverage of preview content.** Assistive tech sees nothing inside the canvas. The editor side is fully accessible; the preview is decorative.
-- **Browser-zoom (Ctrl-+) blurs until repaint.** Pages re-paint at their original scale; bumping the page zoom doesn't propagate to the canvas backing store. Use the `paint={{ scale }}` prop or implement a host-level zoom that re-renders.
+
+Browser zoom (Ctrl-+/-) and pinch-zoom are handled automatically: `<QuillmarkPreview>` subscribes to `matchMedia('(resolution)')` and `visualViewport.resize` and triggers a debounced repaint when DPR or pinch scale changes. Hosts can still override `paint.densityScale` for in-app zoom controls; `layoutScale` independently controls the CSS display-box size so layout and rasterization density don't have to move together. Non-Svelte hosts driving `paintPagesIntoElement` directly can call the same `watchZoom(callback)` helper from `@quillmark/editor/core`.
 
 If these are blockers for your application, do not use `<QuillmarkPreview>` &mdash; compose your own preview UI atop `EditorState` directly.
 

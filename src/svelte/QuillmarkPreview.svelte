@@ -3,13 +3,14 @@
    * QuillmarkPreview — Canvas-based preview of an `EditorState`.
    *
    * Subscribes to the shared state, debounces version bumps, and paints each
-   * page of `state.document` into a `<canvas>` via `@quillmark/wasm` ≥ 0.67's
-   * `Quill.open(doc).paint(ctx, page, scale)` primitive.
+   * page of `state.document` into a `<canvas>` via `@quillmark/wasm` ≥ 0.68's
+   * `Quill.open(doc).paint(ctx, page, { layoutScale, densityScale })` primitive.
    *
    * Trade-offs (intentional for V1, see PROGRAM.md follow-up):
    *   - No text selection in the preview (Canvas is a bitmap).
    *   - No screen-reader coverage of preview content.
-   *   - Browser-zoom (Ctrl-+) blurs until the next repaint.
+   *   - Browser-zoom (Ctrl-+) is now a host concern: feed the new
+   *     `visualViewport.scale` into `paint.densityScale` to repaint crisply.
    *
    * No SVG fallback. Hosts wanting a different strategy should compose their
    * own UI atop `EditorState` instead of using this component.
@@ -17,14 +18,14 @@
 
   import { onDestroy, untrack } from 'svelte';
   import type { EditorState, PaintOptions, TelemetryHandler } from '../core/index.js';
-  import { paintPagesIntoElement } from '../core/index.js';
+  import { paintPagesIntoElement, watchZoom } from '../core/index.js';
   import { useEditor } from './use-editor.svelte.js';
 
   interface Props {
     state: EditorState;
     debounceMs?: number;
     placeholder?: string;
-    /** Optional paint customization (scale, page subset, gap, canvas class). */
+    /** Optional paint customization (layoutScale, densityScale, page subset, gap, canvas class). */
     paint?: PaintOptions;
     onError?: (err: unknown) => void;
     onTelemetry?: TelemetryHandler;
@@ -58,6 +59,16 @@
       if (!ready) return;
       schedule();
     });
+  });
+
+  // Auto-repaint on browser zoom (Ctrl-+/-) and pinch-zoom. Without this the
+  // canvas backing store stays at the DPR captured at the previous paint and
+  // looks blurry until the next document edit forces a repaint. The host
+  // doesn't have to wire anything; passing `paint.densityScale` explicitly
+  // overrides the default but still triggers a repaint via this listener.
+  $effect(() => {
+    const stop = watchZoom(() => schedule());
+    return stop;
   });
 
   function schedule() {

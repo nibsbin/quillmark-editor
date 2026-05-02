@@ -17,7 +17,7 @@
    * through HTML attributes).
    *
    * Canvas-only — no `render` injection. The preview paints directly via
-   * `@quillmark/wasm` ≥ 0.67's `Quill.open(doc).paint(...)` path.
+   * `@quillmark/wasm` ≥ 0.68's `Quill.open(doc).paint(ctx, page, { layoutScale, densityScale })` path.
    */
 
   import QuillmarkPreview from '../svelte/QuillmarkPreview.svelte';
