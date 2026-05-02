@@ -159,15 +159,5 @@
   aria-label={placeholder || 'Editor body'}
 ></div>
 
-<style>
-  .qme-body-editor {
-    outline: none;
-    min-height: 1.5rem;
-    line-height: 1.6;
-  }
-  .qme-body-editor:empty::before {
-    content: attr(data-placeholder);
-    color: var(--qme-muted, #94a3b8);
-    pointer-events: none;
-  }
-</style>
+<!-- Cosmetic styles live in dist/styles.css so hosts have one override surface. -->
+

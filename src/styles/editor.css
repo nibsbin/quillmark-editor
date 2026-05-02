@@ -1,132 +1,597 @@
 /**
  * `@quillmark/editor/styles.css`
  *
- * Default selectors for the Lexical theme classes declared in
- * `core/lexical/theme.ts`. Light DOM by design (per PROGRAM.md O2): hosts
- * can override any token via CSS custom properties; selectors are namespaced
- * under `qme-` to limit the conflict surface.
+ * Single global stylesheet. Components ship with structural-only `<style>`
+ * blocks; cosmetics live here so hosts have one override surface.
  *
- * Components use scoped `<style>` for layout chrome (toolbar, blocks, etc.)
- * — this file only covers the rich-text content classes that Lexical applies
- * inside the contenteditable region.
+ * Theme tokens fall back through three layers:
+ *   1. Host's shadcn/Tailwind tokens (`--color-background`, `--color-foreground`, etc.)
+ *   2. The package's `--qme-*` tokens (set per consumer or via the `theme=` prop)
+ *   3. Hardcoded Reddit-light defaults so a vanilla HTML host gets a sensible look
+ *
+ * Tailwind 4 / shadcn-svelte consumers don't have to touch CSS — defining the
+ * standard `--color-*` palette on `:root` themes the editor automatically.
+ * Other consumers can redefine `--qme-*` directly.
  */
 
-:root {
-  --qme-bg: #ffffff;
-  --qme-text: #0f172a;
-  --qme-muted: #64748b;
-  --qme-border: #e2e8f0;
-  --qme-active: #3b82f6;
-  --qme-focus: #3b82f6;
-  --qme-toolbar-bg: #f8fafc;
-  --qme-toolbar-hover: #e2e8f0;
-  --qme-block-bg: #ffffff;
-  --qme-block-header-bg: #f8fafc;
-  --qme-input-bg: #ffffff;
-  --qme-banner-bg: #fef2f2;
-  --qme-banner-text: #991b1b;
-  --qme-banner-border: #fecaca;
-  --qme-classification-bg: #fef3c7;
-  --qme-classification-text: #78350f;
-  --qme-preview-bg: #f1f5f9;
-  --qme-code-bg: #f1f5f9;
-  --qme-code-text: #1e293b;
-  --qme-link: #2563eb;
+/* -------------------------------------------------------------------------- */
+/* Theme tokens                                                               */
+/* -------------------------------------------------------------------------- */
+
+:where(.qme-root, .qme-preview-root) {
+  /* Surface */
+  --qme-bg: var(--color-background, #f7f8f9);
+  --qme-surface: var(--color-surface, var(--color-card, #ffffff));
+  --qme-surface-elevated: var(--color-surface-elevated, var(--color-popover, #ffffff));
+  --qme-text: var(--color-foreground, #1c1c1c);
+  --qme-muted: var(--color-muted-foreground, #878a8c);
+  --qme-muted-bg: var(--color-muted, #f7f8f9);
+  --qme-border: var(--color-border, #edeff1);
+  --qme-border-strong: var(--color-border-hover, #cfd3d6);
+  --qme-input-bg: var(--color-input, var(--color-surface, #ffffff));
+
+  /* Accent / brand */
+  --qme-primary: var(--color-primary, #1c1c1c);
+  --qme-primary-fg: var(--color-primary-foreground, #ffffff);
+  --qme-accent: var(--color-accent, #edeff1);
+  --qme-accent-fg: var(--color-accent-foreground, #1c1c1c);
+  --qme-ring: var(--color-ring, #878a8c);
+  --qme-link: var(--color-link, var(--color-accent-foreground, #2563eb));
+
+  /* Status */
+  --qme-danger: var(--color-destructive, #ef4444);
+  --qme-danger-bg: var(--color-error-background, #fef2f2);
+  --qme-danger-fg: var(--color-error-foreground, #991b1b);
+  --qme-danger-border: var(--color-error-border, #fecaca);
+  --qme-warn-bg: var(--color-warning-background, #fef3c7);
+  --qme-warn-fg: var(--color-warning-foreground, #78350f);
+  --qme-warn-border: var(--color-warning-border, #fde68a);
+
+  /* Page-shadow color (preview "paper" depth) */
+  --qme-page-shadow: var(--color-foreground-shadow, rgb(0 0 0 / 0.24));
+
+  /* Chrome derived from the surface */
+  --qme-toolbar-bg: var(--color-surface, #ffffff);
+  --qme-toolbar-hover: var(--color-accent, #edeff1);
+  --qme-block-bg: var(--color-surface, #ffffff);
+  --qme-block-header-bg: transparent;
+  --qme-preview-bg: var(--color-background, #f7f8f9);
+  --qme-page-bg: #ffffff;
+
+  /* Code */
+  --qme-code-bg: var(--color-muted, #f7f8f9);
+  --qme-code-text: var(--color-foreground, #1c1c1c);
+
+  /* Typography */
+  --qme-font-sans: var(--font-sans, 'Lato', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif);
+  --qme-font-mono: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+
+  /* Radii */
+  --qme-radius-sm: var(--radius-sm, 0.375rem);
+  --qme-radius: var(--radius, 0.5rem);
+  --qme-radius-lg: var(--radius-lg, 0.625rem);
 }
 
+/* Explicit dark theme override (shadcn hosts already remap --color-* in
+   their own .dark scope, so for them this is unused — but standalone
+   consumers can opt in via class="qme-theme-dark" or [data-qme-theme=dark]). */
 .qme-theme-dark,
 [data-qme-theme='dark'] {
-  --qme-bg: #0f172a;
-  --qme-text: #e2e8f0;
-  --qme-muted: #94a3b8;
-  --qme-border: #1e293b;
-  --qme-toolbar-bg: #1e293b;
-  --qme-toolbar-hover: #334155;
-  --qme-block-bg: #0f172a;
-  --qme-block-header-bg: #1e293b;
-  --qme-input-bg: #1e293b;
-  --qme-preview-bg: #020617;
-  --qme-code-bg: #1e293b;
-  --qme-code-text: #e2e8f0;
+  --qme-bg: #1a1a1b;
+  --qme-text: #d7dadc;
+  --qme-muted: #818384;
+  --qme-muted-bg: #272729;
+  --qme-border: #4a4a50;
+  --qme-border-strong: #5c5c66;
+  --qme-surface: #1a1a1b;
+  --qme-input-bg: #272729;
+  --qme-primary: #d7dadc;
+  --qme-primary-fg: #1a1a1b;
+  --qme-toolbar-bg: #1a1a1b;
+  --qme-toolbar-hover: #313135;
+  --qme-block-bg: #1a1a1b;
+  --qme-preview-bg: #0f0f10;
+  --qme-page-bg: #1a1a1b;
+  --qme-code-bg: #272729;
+  --qme-code-text: #d7dadc;
+  --qme-page-shadow: rgb(0 0 0 / 0.6);
 }
 
 @media (prefers-color-scheme: dark) {
-  .qme-theme-auto {
-    --qme-bg: #0f172a;
-    --qme-text: #e2e8f0;
-    --qme-muted: #94a3b8;
-    --qme-border: #1e293b;
-    --qme-toolbar-bg: #1e293b;
-    --qme-toolbar-hover: #334155;
-    --qme-block-bg: #0f172a;
-    --qme-block-header-bg: #1e293b;
-    --qme-input-bg: #1e293b;
-    --qme-preview-bg: #020617;
-    --qme-code-bg: #1e293b;
-    --qme-code-text: #e2e8f0;
+  .qme-theme-auto:not(.qme-theme-light) {
+    --qme-bg: #1a1a1b;
+    --qme-text: #d7dadc;
+    --qme-muted: #818384;
+    --qme-muted-bg: #272729;
+    --qme-border: #4a4a50;
+    --qme-border-strong: #5c5c66;
+    --qme-surface: #1a1a1b;
+    --qme-input-bg: #272729;
+    --qme-primary: #d7dadc;
+    --qme-primary-fg: #1a1a1b;
+    --qme-toolbar-bg: #1a1a1b;
+    --qme-toolbar-hover: #313135;
+    --qme-block-bg: #1a1a1b;
+    --qme-preview-bg: #0f0f10;
+    --qme-page-bg: #1a1a1b;
+    --qme-code-bg: #272729;
+    --qme-code-text: #d7dadc;
+    --qme-page-shadow: rgb(0 0 0 / 0.6);
   }
 }
 
-.qme-paragraph {
-  margin: 0 0 0.5em 0;
+/* -------------------------------------------------------------------------- */
+/* Editor root + scaffolding                                                  */
+/* -------------------------------------------------------------------------- */
+
+.qme-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  background: var(--qme-bg);
+  color: var(--qme-text);
+  font-family: var(--qme-font-sans);
+  font-size: 15px;
+  line-height: 1.5;
 }
 
+.qme-classification {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 0.25rem 0.5rem;
+  background: var(--qme-warn-bg);
+  color: var(--qme-warn-fg);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.qme-banner {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: color-mix(in srgb, var(--qme-danger) 10%, transparent);
+  color: var(--qme-danger);
+  border-bottom: 1px solid color-mix(in srgb, var(--qme-danger) 30%, transparent);
+  font-size: 0.875rem;
+}
+.qme-banner-body { flex: 1; min-width: 0; }
+.qme-banner-body p { margin: 0; }
+.qme-cap { text-transform: capitalize; }
+.qme-banner-close {
+  appearance: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.125rem 0.375rem;
+  opacity: 0.7;
+  border-radius: var(--qme-radius-sm);
+  transition: opacity 120ms ease, background 120ms ease;
+}
+.qme-banner-close:hover { opacity: 1; background: color-mix(in srgb, var(--qme-danger) 12%, transparent); }
+
+.qme-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 1rem;
+}
+@media (min-width: 768px) {
+  .qme-scroll { padding: 1.5rem; }
+}
+
+.qme-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 56rem;
+  margin: 0 auto;
+}
+.qme-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.qme-card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.qme-spacer { min-height: 30vh; }
+
+/* -------------------------------------------------------------------------- */
+/* Toolbar                                                                    */
+/* -------------------------------------------------------------------------- */
+
+.qme-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.125rem;
+  padding: 0.375rem 0.75rem;
+  background: var(--qme-toolbar-bg);
+  border-bottom: 1px solid var(--qme-border);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.qme-tb-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--qme-radius-sm);
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.qme-tb-btn:hover { background: var(--qme-toolbar-hover); }
+.qme-tb-btn:focus-visible { outline: 2px solid var(--qme-ring); outline-offset: 1px; }
+.qme-tb-sep {
+  width: 1px;
+  height: 1.25rem;
+  background: var(--qme-border);
+  margin: 0 0.25rem;
+}
+.qme-tb-select {
+  height: 2rem;
+  padding: 0 0.5rem;
+  border: 1px solid var(--qme-border);
+  border-radius: var(--qme-radius-sm);
+  background: var(--qme-input-bg);
+  color: inherit;
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+.qme-tb-select:hover { border-color: var(--qme-border-strong); }
+.qme-tb-select:focus-visible { outline: 2px solid var(--qme-ring); outline-offset: 1px; }
+
+/* -------------------------------------------------------------------------- */
+/* Editor block (primary + card)                                              */
+/* -------------------------------------------------------------------------- */
+
+.qme-block {
+  position: relative;
+  border-radius: var(--qme-radius);
+  background: var(--qme-block-bg);
+  border: 1px solid color-mix(in srgb, var(--qme-border) 50%, transparent);
+  /* Soft elevation — mirrors the host's "lift" treatment */
+  box-shadow:
+    0 2px 8px -2px rgb(0 0 0 / 0.1),
+    0 1px 3px -1px rgb(0 0 0 / 0.06);
+  overflow: clip;
+  transition: box-shadow 160ms ease, border-color 160ms ease;
+}
+.qme-block:focus-within,
+.qme-block.qme-active {
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.05),
+    0 2px 4px -2px rgb(0 0 0 / 0.05);
+  outline: none;
+  border-color: color-mix(in srgb, var(--qme-border-strong) 60%, transparent);
+}
+
+.qme-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  background: var(--qme-block-header-bg);
+  border-bottom: none;
+}
+.qme-label {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  margin-left: -0.5rem;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--qme-text) 80%, transparent);
+  cursor: text;
+  border-radius: var(--qme-radius-sm);
+  transition: background-color 120ms ease;
+}
+.qme-label:hover { background: var(--qme-bg); }
+.qme-label-input {
+  border: 1px solid var(--qme-border);
+  border-radius: var(--qme-radius-sm);
+  padding: 0.25rem 0.5rem;
+  margin-left: -0.5rem;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--qme-bg);
+  color: inherit;
+}
+.qme-label-input:focus { outline: 2px solid var(--qme-ring); outline-offset: 1px; }
+
+/* Card move/delete cluster — hidden until hover/active for a calmer surface */
+.qme-block-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+.qme-block-controls .qme-icon-btn:not(.qme-danger) {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.qme-block:hover .qme-block-controls .qme-icon-btn,
+.qme-block:focus-within .qme-block-controls .qme-icon-btn,
+.qme-block.qme-active .qme-block-controls .qme-icon-btn {
+  opacity: 1;
+}
+.qme-icon-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--qme-radius-sm);
+  width: 1.75rem;
+  height: 1.75rem;
+  cursor: pointer;
+  color: var(--qme-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 120ms ease, background-color 120ms ease;
+}
+.qme-icon-btn:hover:not([disabled]) {
+  background: var(--qme-toolbar-hover);
+  color: var(--qme-text);
+}
+.qme-icon-btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.qme-icon-btn.qme-danger {
+  color: color-mix(in srgb, var(--qme-danger) 60%, transparent);
+}
+.qme-icon-btn.qme-danger:hover:not([disabled]) {
+  background: color-mix(in srgb, var(--qme-danger) 10%, transparent);
+  color: var(--qme-danger);
+}
+
+.qme-block-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0.5rem 0.5rem;
+}
+.qme-block .qme-block-body:first-child {
+  padding-top: 0.5rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Add-card affordance                                                        */
+/* -------------------------------------------------------------------------- */
+
+.qme-add-card {
+  appearance: none;
+  background: transparent;
+  border: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0;
+  cursor: pointer;
+  color: var(--qme-muted);
+  opacity: 0.5;
+  transition: opacity 160ms ease;
+}
+.qme-add-card:hover:not([disabled]) { opacity: 1; }
+.qme-add-card[disabled] { cursor: not-allowed; opacity: 0.25; }
+.qme-add-line {
+  flex: 1;
+  height: 1px;
+  background: var(--qme-border);
+}
+.qme-add-pill {
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--qme-block-bg);
+  color: var(--qme-muted);
+  border: 1px dashed var(--qme-border-strong);
+  border-radius: 999px;
+  padding: 0.125rem 0.625rem;
+  letter-spacing: 0.02em;
+}
+
+/* Card-type picker (shown after `+ Add card` until a tag is chosen) */
+.qme-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.75rem 1rem;
+  border: 1px dashed color-mix(in srgb, var(--qme-primary) 40%, transparent);
+  border-radius: var(--qme-radius);
+  background: color-mix(in srgb, var(--qme-muted-bg) 50%, transparent);
+}
+.qme-picker-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--qme-muted);
+}
+.qme-picker-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.qme-picker-select {
+  flex: 1;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Metadata form                                                              */
+/* -------------------------------------------------------------------------- */
+
+.qme-metadata {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem 1rem;
+  padding: 0.75rem 1rem 1rem;
+}
+.qme-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.qme-field-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--qme-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.qme-input {
+  width: 100%;
+  border: 1px solid var(--qme-border);
+  border-radius: var(--qme-radius-sm);
+  padding: 0.4375rem 0.625rem;
+  font: inherit;
+  font-size: 0.875rem;
+  background: var(--qme-input-bg);
+  color: inherit;
+  box-sizing: border-box;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.qme-input:hover { border-color: var(--qme-border-strong); }
+.qme-input:focus {
+  outline: none;
+  border-color: var(--qme-ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--qme-ring) 20%, transparent);
+}
+.qme-textarea {
+  resize: vertical;
+  font-family: inherit;
+  min-height: 2.5rem;
+}
+.qme-help {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--qme-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Body editor (Lexical contenteditable)                                       */
+/* -------------------------------------------------------------------------- */
+
+.qme-body-editor {
+  position: relative;
+  outline: none;
+  min-height: 1.5rem;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--qme-font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--qme-text);
+  word-wrap: break-word;
+  caret-color: var(--qme-text);
+}
+.qme-body-editor:empty::before,
+.qme-body-editor[data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: var(--qme-muted);
+  opacity: 0.6;
+  pointer-events: none;
+  font-style: italic;
+}
+
+/* Lexical theme classes (registered in core/lexical/theme.ts). The selectors
+   are deliberately not nested under `.qme-body-editor` — Lexical applies them
+   to nodes inside the contenteditable, but consumers can also use them in
+   read-only previews of the same content. */
+
+.qme-paragraph {
+  margin: 1rem 0 0 0;
+  line-height: 1.5;
+}
+.qme-body-editor > .qme-paragraph:first-child { margin-top: 0; }
+.qme-body-editor > .qme-paragraph:last-child { margin-bottom: 0; }
+
 .qme-h1 {
-  font-size: 1.875rem;
+  font-size: 2em;
   font-weight: 700;
   line-height: 1.2;
-  margin: 1em 0 0.5em;
+  margin: 0.67em 0;
 }
 .qme-h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.25;
-  margin: 1em 0 0.5em;
-}
-.qme-h3 {
-  font-size: 1.25rem;
+  font-size: 1.5em;
   font-weight: 600;
   line-height: 1.3;
-  margin: 1em 0 0.5em;
+  margin: 0.75em 0;
 }
-.qme-h4,
-.qme-h5,
-.qme-h6 {
+.qme-h3 {
+  font-size: 1.25em;
   font-weight: 600;
-  margin: 1em 0 0.5em;
+  line-height: 1.4;
+  margin: 0.8em 0;
+}
+.qme-h4, .qme-h5, .qme-h6 {
+  font-weight: 600;
+  margin: 0.85em 0;
 }
 
 .qme-ul,
 .qme-ol {
-  margin: 0 0 0.5em 0;
-  padding-left: 1.5em;
+  margin: 1rem 0 0 0.5rem;
+  padding-left: 1rem;
 }
+.qme-ul { list-style-type: disc; }
+.qme-ol { list-style-type: decimal; }
 .qme-li {
-  margin: 0.125em 0;
+  margin: 0;
+  line-height: 1.5;
+}
+.qme-li > .qme-paragraph {
+  margin: 0;
+  line-height: 1.5;
+}
+.qme-li > .qme-paragraph + .qme-paragraph {
+  margin-top: 1em;
+}
+.qme-li > .qme-ul,
+.qme-li > .qme-ol {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .qme-nested-li {
   list-style-type: none;
 }
 
-.qme-bold {
-  font-weight: 700;
-}
-.qme-italic {
-  font-style: italic;
-}
-.qme-underline {
-  text-decoration: underline;
-}
-.qme-strike {
-  text-decoration: line-through;
-}
+.qme-bold { font-weight: 700; }
+.qme-italic { font-style: italic; }
+.qme-underline { text-decoration: underline; }
+.qme-strike { text-decoration: line-through; }
 .qme-code-inline {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--qme-font-mono);
   background: var(--qme-code-bg);
   color: var(--qme-code-text);
   padding: 0.1em 0.3em;
   border-radius: 3px;
-  font-size: 0.95em;
+  font-size: 0.9em;
 }
 
 .qme-link {
@@ -136,36 +601,98 @@
 }
 
 .qme-quote {
-  margin: 0 0 0.5em 0;
+  margin: 1em 0;
   padding: 0.25em 1em;
   border-left: 3px solid var(--qme-border);
   color: var(--qme-muted);
+  font-style: italic;
 }
 
 .qme-code {
   display: block;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--qme-font-mono);
   background: var(--qme-code-bg);
   color: var(--qme-code-text);
-  padding: 0.75em 1em;
-  border-radius: 4px;
+  padding: 1em;
+  border-radius: 6px;
   white-space: pre-wrap;
-  margin: 0 0 0.5em 0;
+  margin: 1em 0;
+  overflow-x: auto;
 }
 
 .qme-table {
   border-collapse: collapse;
-  width: 100%;
-  margin: 0 0 0.5em 0;
+  width: auto;
+  margin: 1em 0;
 }
 .qme-table-cell,
 .qme-table-cell-header {
-  border: 1px solid var(--qme-border);
-  padding: 0.375em 0.625em;
+  border: 1px solid var(--qme-border-strong);
+  padding: 0.4em 0.6em;
   vertical-align: top;
-  min-width: 4ch;
+  min-width: 4em;
+  text-align: left;
 }
 .qme-table-cell-header {
-  background: var(--qme-toolbar-bg);
+  background: var(--qme-muted-bg);
   font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Preview (canvas-based)                                                     */
+/* -------------------------------------------------------------------------- */
+
+.qme-preview-root {
+  position: relative;
+  flex: 1 1 auto;
+  overflow: auto;
+  min-height: 0;
+  background: var(--qme-preview-bg);
+  font-family: var(--qme-font-sans);
+  color: var(--qme-text);
+}
+.qme-preview-host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  min-height: 100%;
+}
+.qme-preview-host canvas {
+  display: block;
+  background: var(--qme-page-bg);
+  /* Mirror the host's preview "page" depth — soft halo, no hard border. */
+  box-shadow: 0 0 4px 1px var(--qme-page-shadow);
+  /* No explicit border or radius — print-style page edges. */
+}
+.qme-preview-status {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--qme-muted);
+  background: color-mix(in srgb, var(--qme-bg) 90%, transparent);
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  z-index: 2;
+}
+.qme-preview-error {
+  position: absolute;
+  inset: 0.75rem;
+  background: color-mix(in srgb, var(--qme-danger-bg) 96%, transparent);
+  color: var(--qme-danger-fg);
+  border: 1px solid var(--qme-danger-border);
+  border-radius: var(--qme-radius);
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  z-index: 3;
+  max-height: max-content;
+  overflow: auto;
+}
+.qme-preview-placeholder {
+  color: var(--qme-muted);
+  font-style: italic;
+  padding: 2rem 1rem;
+  text-align: center;
 }

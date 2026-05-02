@@ -27,39 +27,5 @@
   <span class="qme-add-line"></span>
 </button>
 
-<style>
-  .qme-add-card {
-    appearance: none;
-    background: transparent;
-    border: none;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.375rem 0;
-    cursor: pointer;
-    color: var(--qme-muted, #64748b);
-    opacity: 0.6;
-    transition: opacity 120ms ease;
-  }
-  .qme-add-card:hover:not([disabled]) {
-    opacity: 1;
-  }
-  .qme-add-card[disabled] {
-    cursor: not-allowed;
-    opacity: 0.3;
-  }
-  .qme-add-line {
-    flex: 1;
-    height: 1px;
-    background: var(--qme-border, #e2e8f0);
-  }
-  .qme-add-pill {
-    font-size: 0.75rem;
-    font-weight: 500;
-    background: var(--qme-block-bg, #fff);
-    border: 1px dashed var(--qme-border, #cbd5e1);
-    border-radius: 999px;
-    padding: 0.125rem 0.625rem;
-  }
-</style>
+<!-- Cosmetic styles live in dist/styles.css so hosts have one override surface. -->
+

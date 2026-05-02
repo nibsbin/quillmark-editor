@@ -88,7 +88,7 @@
       {@const v = values[name]}
       {@const label = field.title ?? name}
       <div class="qme-field" data-field={name}>
-        <label class="qme-label" for="qme-{name}">
+        <label class="qme-field-label" for="qme-{name}">
           {label}
           {#if field.required}<span aria-label="required">*</span>{/if}
         </label>
@@ -164,49 +164,5 @@
   {/if}
 </div>
 
-<style>
-  .qme-metadata {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 0.75rem 1rem;
-    padding: 0.75rem 1rem;
-    background: var(--qme-metadata-bg, transparent);
-  }
-  .qme-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    min-width: 0;
-  }
-  .qme-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--qme-label, #475569);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .qme-input {
-    width: 100%;
-    border: 1px solid var(--qme-border, #cbd5e1);
-    border-radius: 4px;
-    padding: 0.375rem 0.5rem;
-    font: inherit;
-    background: var(--qme-input-bg, #fff);
-    color: inherit;
-    box-sizing: border-box;
-  }
-  .qme-input:focus {
-    outline: 2px solid var(--qme-focus, #3b82f6);
-    outline-offset: 1px;
-    border-color: transparent;
-  }
-  .qme-textarea {
-    resize: vertical;
-    font-family: inherit;
-  }
-  .qme-help {
-    margin: 0;
-    font-size: 0.75rem;
-    color: var(--qme-muted, #94a3b8);
-  }
-</style>
+<!-- Cosmetic styles live in dist/styles.css so hosts have one override surface. -->
+

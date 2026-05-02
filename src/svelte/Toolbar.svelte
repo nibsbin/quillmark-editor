@@ -128,52 +128,5 @@
   {/if}
 </div>
 
-<style>
-  .qme-toolbar {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-    padding: 0.375rem 0.75rem;
-    background: var(--qme-toolbar-bg, #f8fafc);
-    border-bottom: 1px solid var(--qme-border, #e2e8f0);
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-  .qme-tb-btn {
-    appearance: none;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    width: 2rem;
-    height: 2rem;
-    cursor: pointer;
-    color: inherit;
-    font: inherit;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .qme-tb-btn:hover {
-    background: var(--qme-toolbar-hover, #e2e8f0);
-  }
-  .qme-tb-btn:focus-visible {
-    outline: 2px solid var(--qme-focus, #3b82f6);
-    outline-offset: 1px;
-  }
-  .qme-tb-sep {
-    width: 1px;
-    height: 1.25rem;
-    background: var(--qme-border, #cbd5e1);
-    margin: 0 0.25rem;
-  }
-  .qme-tb-select {
-    height: 2rem;
-    padding: 0 0.5rem;
-    border: 1px solid var(--qme-border, #cbd5e1);
-    border-radius: 4px;
-    background: var(--qme-input-bg, #fff);
-  }
-</style>
+<!-- Cosmetic styles live in dist/styles.css so hosts have one override surface. -->
+

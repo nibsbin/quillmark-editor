@@ -48,48 +48,5 @@
   </div>
 </div>
 
-<style>
-  .qme-picker {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.625rem 0.75rem;
-    border: 1px dashed var(--qme-active, #3b82f6);
-    border-radius: 6px;
-    background: var(--qme-picker-bg, rgba(59, 130, 246, 0.05));
-  }
-  .qme-picker-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--qme-muted, #64748b);
-  }
-  .qme-picker-row {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
-  .qme-picker-select {
-    flex: 1;
-    border: 1px solid var(--qme-border, #cbd5e1);
-    border-radius: 4px;
-    padding: 0.375rem 0.5rem;
-    background: var(--qme-input-bg, #fff);
-    font: inherit;
-  }
-  .qme-icon-btn {
-    appearance: none;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    width: 2rem;
-    height: 2rem;
-    cursor: pointer;
-    line-height: 1;
-    color: inherit;
-  }
-  .qme-icon-btn:hover {
-    background: var(--qme-toolbar-hover, #e2e8f0);
-  }
-</style>
+<!-- Cosmetic styles live in dist/styles.css so hosts have one override surface. -->
+

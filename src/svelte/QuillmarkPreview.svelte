@@ -135,45 +135,5 @@
   <div bind:this={host} class="qme-preview-host" aria-hidden="true"></div>
 </div>
 
-<style>
-  .qme-preview-root {
-    position: relative;
-    flex: 1 1 auto;
-    overflow: auto;
-    min-height: 0;
-    background: var(--qme-preview-bg, #f1f5f9);
-    padding: 1rem;
-  }
-  .qme-preview-host {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .qme-preview-host :global(canvas) {
-    background: var(--qme-bg, #fff);
-    border: 1px solid var(--qme-border, #e2e8f0);
-    border-radius: 4px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  }
-  .qme-preview-error {
-    background: var(--qme-banner-bg, #fef2f2);
-    color: var(--qme-banner-text, #991b1b);
-    padding: 0.5rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    margin-bottom: 0.5rem;
-  }
-  .qme-preview-status {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--qme-muted, #64748b);
-  }
-  .qme-preview-placeholder {
-    color: var(--qme-muted, #94a3b8);
-    font-style: italic;
-    padding: 1rem;
-    text-align: center;
-  }
-</style>
+<!-- Cosmetic styles live in dist/styles.css so hosts have one override surface. -->
+
